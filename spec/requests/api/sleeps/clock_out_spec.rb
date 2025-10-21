@@ -39,10 +39,20 @@ RSpec.describe 'Clock Out Request', type: :request do
           end
 
           context 'when sleep record does not have clock_in_time' do
-            # This test case is difficult to create because Sleep model validates presence of clock_in_time
-            # We'll skip this test since it's not practically possible with current model constraints
-            xit 'returns unprocessable entity with error message' do
-              # This test is skipped because Sleep model requires clock_in_time to be present
+            # Create a sleep record without clock_in_time by bypassing validation
+            let!(:invalid_sleep) do
+              sleep_record = Sleep.new(user: user, clock_out_time: Time.current, duration_minutes: 0)
+              sleep_record.save(validate: false) # Bypass validation to create record without clock_in_time
+              sleep_record
+            end
+
+            it 'returns unprocessable entity with error message' do
+              post '/api/sleeps/clock_out',
+                   params: { sleep_id: invalid_sleep.id },
+                   headers: { 'X-User-Id' => user.id }
+
+              expect(response).to have_http_status(:unprocessable_entity)
+              expect(JSON.parse(response.body)['error']['messages']).to include('Clock in time must be present for clock out')
             end
           end
         end

@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe ClockOutService, type: :service do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:user) { User.create!(name: 'Test User') }
   let(:sleep) { Sleep.create!(user: user, clock_in_time: 1.hour.ago) }
 
@@ -17,10 +19,12 @@ RSpec.describe ClockOutService, type: :service do
       end
 
       it 'calculates duration_minutes correctly' do
-        sleep = Sleep.create!(user: user, clock_in_time: 2.hours.ago)
-        result, _ = described_class.call(sleep.id)
+        travel_to Time.current do
+          sleep = Sleep.create!(user: user, clock_in_time: 2.hours.ago)
+          result, _ = described_class.call(sleep.id)
 
-        expect(result.duration_minutes).to eq(120) # 2 hours = 120 minutes
+          expect(result.duration_minutes).to eq(120) # 2 hours = 120 minutes
+        end
       end
 
       it 'saves the updated record' do
