@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_10_21_105050) do
+ActiveRecord::Schema[7.2].define(version: 2025_10_21_120018) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
-  create_table "daily_sleep_summaries", force: :cascade do |t|
-    t.bigint "user_id", null: false
+  create_table "daily_sleep_summaries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
     t.date "date"
     t.integer "total_sleep_duration_minutes"
     t.integer "number_of_sleep_sessions"
@@ -26,9 +27,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_21_105050) do
     t.index ["user_id"], name: "index_daily_sleep_summaries_on_user_id"
   end
 
-  create_table "follows", force: :cascade do |t|
-    t.bigint "follower_id"
-    t.bigint "followed_id"
+  create_table "follows", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "follower_id"
+    t.uuid "followed_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["followed_id"], name: "index_follows_on_followed_id"
@@ -36,8 +37,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_21_105050) do
     t.index ["follower_id"], name: "index_follows_on_follower_id"
   end
 
-  create_table "sleeps", force: :cascade do |t|
-    t.bigint "user_id", null: false
+  create_table "sleeps", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
     t.datetime "clock_in_time"
     t.datetime "clock_out_time"
     t.integer "duration_minutes"
@@ -48,10 +49,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_21_105050) do
     t.index ["duration_minutes"], name: "index_sleeps_on_duration_minutes", order: :desc, where: "(clock_out_time IS NOT NULL)"
     t.index ["user_id", "clock_in_time", "duration_minutes"], name: "index_sleeps_on_user_id_and_clock_in_time_and_duration_minutes"
     t.index ["user_id"], name: "index_sleeps_on_user_id"
-    t.index ["user_id"], name: "index_sleeps_on_user_id_clock_out_time_null", unique: true, where: "(clock_out_time IS NULL)"
+    t.index ["user_id"], name: "index_sleeps_user_id_clock_out_time_null", unique: true, where: "(clock_out_time IS NULL)"
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -59,5 +60,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_21_105050) do
   end
 
   add_foreign_key "daily_sleep_summaries", "users"
+  add_foreign_key "follows", "users", column: "followed_id"
+  add_foreign_key "follows", "users", column: "follower_id"
   add_foreign_key "sleeps", "users"
 end

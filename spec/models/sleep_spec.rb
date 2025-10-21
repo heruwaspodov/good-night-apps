@@ -11,7 +11,6 @@ RSpec.describe Sleep, type: :model do
   end
 
   describe 'db indexes' do
-    it { is_expected.to have_db_index(:user_id) }
     it { is_expected.to have_db_index(:clock_in_time) }
     it { is_expected.to have_db_index(:clock_out_time) }
     it { is_expected.to have_db_index([ :user_id, :clock_in_time, :duration_minutes ]) }

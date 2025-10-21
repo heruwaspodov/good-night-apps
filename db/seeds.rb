@@ -10,6 +10,8 @@
 
 # Create seed users
 user_names = [
+  'Heru Waspodov',
+  'Bara Sky',
   'Alice Johnson',
   'Bob Smith',
   'Carol Williams',
@@ -24,9 +26,8 @@ user_names = [
 
 puts "Creating seed users..."
 user_names.each do |name|
-  User.find_or_create_by!(name: name) do |user|
-    puts "Created user: #{name}"
-  end
+  user = User.find_or_create_by!(name: name)
+  puts "Created user: #{name} (ID: #{user.id})"
 end
 
 puts "Seed users created successfully!"
