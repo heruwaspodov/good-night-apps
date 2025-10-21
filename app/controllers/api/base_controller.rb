@@ -35,5 +35,13 @@ module Api
       messages = errors.is_a?(Array) ? errors : [ errors ]
       render json: ApiResponseService.error(messages), status: status
     end
+
+    def authenticate_user!
+      user_id = request.headers["X-User-Id"]
+      return render_error([ "X-User-Id header is required" ], :unauthorized) unless user_id
+
+      @current_user ||= User.find_by(id: user_id)
+      render_error([ "User not found" ], :unauthorized) unless @current_user
+    end
   end
 end
