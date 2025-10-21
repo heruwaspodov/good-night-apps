@@ -7,4 +7,12 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  namespace :api do
+    resources :sleeps, only: [] do
+      collection do
+        post :clock_in
+      end
+    end
+  end
 end
