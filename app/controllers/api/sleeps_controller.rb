@@ -39,18 +39,21 @@ module Api
 
       sleep_records = service.call
 
+      serialized_data = SleepSerializer.new(sleep_records).serializable_hash
+
+      # Combine data with pagination metadata using the reusable method
       render_success(
-        SleepSerializer.new(sleep_records).serializable_hash
+        serialized_data.merge(meta: build_pagination_meta(sleep_records))
       )
     end
 
     private
 
     def validate_following_users_sleep_records_params
-      # Prepare params with defaults if needed
+      # Prepare params with validation (no defaults yet)
       request_params = {
-        page: params[:page] || 1,
-        limit: params[:limit] || 20,
+        page: params[:page],
+        limit: params[:limit],
         date_start: params[:date_start],
         date_end: params[:date_end]
       }
@@ -63,8 +66,17 @@ module Api
         return false  # Stop execution of the action
       end
 
+      # After validation, set defaults for page and limit if they weren't provided
+      # This happens only if validation passes
+      validated_params_with_defaults = {
+        page: params[:page] || 1,
+        limit: params[:limit] || 20,
+        date_start: params[:date_start],
+        date_end: params[:date_end]
+      }
+
       # Store validated params for use in the action
-      @validated_params = request_params
+      @validated_params = validated_params_with_defaults
     end
 
     def validated_params

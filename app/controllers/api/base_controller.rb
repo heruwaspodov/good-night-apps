@@ -43,5 +43,15 @@ module Api
       @current_user ||= User.find_by(id: user_id)
       render_error([ "User not found" ], :unauthorized) unless @current_user
     end
+
+    def build_pagination_meta(paginated_collection)
+      {
+        current_page: paginated_collection.respond_to?(:current_page) ? paginated_collection.current_page : 1,
+        per_page: paginated_collection.respond_to?(:limit_value) ? paginated_collection.limit_value : 20,
+        offset: paginated_collection.respond_to?(:offset_value) ? paginated_collection.offset_value : 0,
+        has_next_page: paginated_collection.respond_to?(:next_page) ? paginated_collection.next_page.present? : false,
+        has_prev_page: paginated_collection.respond_to?(:previous_page) ? paginated_collection.previous_page.present? : false
+      }
+    end
   end
 end

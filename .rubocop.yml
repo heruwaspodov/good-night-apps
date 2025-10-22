@@ -23,10 +23,10 @@ RSpec/IncludeExamples:
   Enabled: true
 
 RSpec/ExampleLength:
-  Max: 20
+  Max: 30
 
 RSpec/MultipleExpectations:
-  Max: 20
+  Max: 30
 
 RSpec/NestedGroups:
   Enabled: false

@@ -40,8 +40,8 @@ class FollowingUsersSleepRecordsService
       records.find { |record| record.id == id }
     end.compact
 
-    # Return as paginated array to maintain the interface
-    Kaminari.paginate_array(ordered_records, total_count: sleep_record_ids.length).page(@page).per(@limit)
+    # Return as paginated array without total_count to avoid expensive COUNT query
+    Kaminari.paginate_array(ordered_records).page(@page).per(@limit)
   end
 
   private
