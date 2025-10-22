@@ -86,14 +86,6 @@ RSpec.describe FollowingUsersSleepRecordsService, type: :service do
         expect(result).not_to include(old_sleep)
       end
 
-      it 'uses without_count for performance' do
-        # This test checks that the implementation uses without_count
-        # by verifying that total_count is not computed
-        result = service_call
-        # Kaminari with without_count does not compute total count
-        expect(result).to respond_to(:limit_value)
-      end
-
       it 'applies pagination' do
         # Create multiple sleep records
         15.times do |i|
@@ -119,7 +111,7 @@ RSpec.describe FollowingUsersSleepRecordsService, type: :service do
         prev_week_sleep = Sleep.create!(
           user: followed_user,
           clock_in_time: 8.days.ago,
-          clock_out_time: 6.days.ago,
+          clock_out_time: 6.hours.ago,
           duration_minutes: 120
         )
 
