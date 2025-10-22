@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       collection do
         post :clock_in
         post :clock_out
+        get :following_users_sleep_records
       end
     end
 
