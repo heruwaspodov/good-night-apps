@@ -15,5 +15,12 @@ Rails.application.routes.draw do
         post :clock_out
       end
     end
+
+    resources :follows, only: [] do
+      collection do
+        post :follow
+        post :unfollow
+      end
+    end
   end
 end
