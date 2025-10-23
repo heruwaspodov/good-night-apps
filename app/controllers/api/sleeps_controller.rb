@@ -39,7 +39,7 @@ module Api
 
       sleep_records = service.call
 
-      serialized_data = SleepSerializer.new(sleep_records).serializable_hash
+      serialized_data = FollowingUsersSleepRecordsSerializer.new(sleep_records).serializable_hash
 
       # Combine data with pagination metadata using the reusable method
       render_success(
